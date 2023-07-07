@@ -20,6 +20,16 @@ function Article() {
     pageSize: pageData.pageSize,
   });
 
+  //   删除列表
+  const deleteItem = async (record, index) => {
+    await http({ url: "/delete", method: "delete", params: {} });
+    // 刷新列表---改变之前的params依赖
+    setParams({
+      page: 1,
+      ...params1,
+    });
+  };
+
   const columns = [
     { title: "封面", dataIndex: "cover", key: "cover" },
     { title: "标题", dataIndex: "title", key: "title" },
@@ -28,9 +38,17 @@ function Article() {
     { title: "阅读数", dataIndex: "readNumber", key: "readNumber" },
     { title: "评论数", dataIndex: "commentNumber", key: "commentNumber" },
     { title: "点赞数", dataIndex: "likeNumber", key: "likeNumber" },
-    { title: "操作", key: "action" },
+    {
+      title: "操作",
+      key: "action",
+      render: (_, record, index) => (
+        <>
+          <Button onClick={() => deleteItem(record, index)}>删除</Button>
+        </>
+      ),
+    },
   ];
-  const [form]=Form.useForm()
+  const [form] = Form.useForm();
 
   const submit = (values) => {
     const params = {};
@@ -42,8 +60,8 @@ function Article() {
     params.radio = values.radio;
     params.page = 1;
     setParams({ ...params1, ...params });
-	setPageData({page: 1, pageSize: pageData.pageSize });//重置页码
-	form.resetFields()//重置表单
+    setPageData({ page: 1, pageSize: pageData.pageSize }); //重置页码
+    form.resetFields(); //重置表单
   };
 
   useEffect(() => {
@@ -65,7 +83,6 @@ function Article() {
 
   const changePage = (page, pageSize) => {
     setPageData({ page: page, pageSize: pageSize });
-    console.log(page);
     const params = {};
     params.page = page;
     params.pageSize = pageSize;
@@ -77,7 +94,6 @@ function Article() {
         style={{ marginTop: "30px", width: "90%", marginLeft: "40px" }}
         title={"首页>内容管理"}
       >
-		{pageData.page}
         <Form onFinish={(values) => submit(values)} form={form}>
           <Form.Item name="status" label="状态" initialValue={"-1"}>
             <Radio.Group>
@@ -112,7 +128,7 @@ function Article() {
           columns={columns}
           rowKey={(record, index) => record.title}
           pagination={{
-           current: pageData.page,
+            current: pageData.page,
             pageSize: pageData.pageSize,
             total: pageTotal,
             onChange: (page, pageSize) => changePage(page, pageSize),
