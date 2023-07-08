@@ -4,7 +4,12 @@ import locale from "antd/es/date-picker/locale/zh_CN";
 import "./index.scss";
 import { useEffect, useState } from "react";
 import { http } from "@/utils";
+import {useNavigate} from 'react-router-dom'
+import {useStore} from "@/store/index";
+import { observer } from "mobx-react-lite";
+
 function Article() {
+	const navigate=useNavigate()
   const radioItems = [
     { value: "-1", text: "全部" },
     { value: "0", text: "草稿" },
@@ -29,6 +34,13 @@ function Article() {
       ...params1,
     });
   };
+  const {channelStore}=useStore()
+
+
+  //跳转到编辑页
+  const gotoPublish=(id)=>{
+	navigate(`/publish?id=${id}`)
+  }
 
   const columns = [
     { title: "封面", dataIndex: "cover", key: "cover" },
@@ -42,7 +54,7 @@ function Article() {
       title: "操作",
       key: "action",
       render: (_, record, index) => (
-        <>
+        <><Button onClick={()=>gotoPublish(record.id)}>编辑</Button>
           <Button onClick={() => deleteItem(record, index)}>删除</Button>
         </>
       ),
@@ -63,6 +75,8 @@ function Article() {
     setPageData({ page: 1, pageSize: pageData.pageSize }); //重置页码
     form.resetFields(); //重置表单
   };
+
+
 
   useEffect(() => {
     const getData = async () => {
@@ -104,10 +118,9 @@ function Article() {
               ))}
             </Radio.Group>
           </Form.Item>
-          <Form.Item name="radio" label="频道" initialValue={1}>
+          <Form.Item name="radio" label="频道" >
             <Select>
-              <Select.Option key={1}>1</Select.Option>
-              <Select.Option key={2}>2</Select.Option>
+				{channelStore.channelList.map((item,index)=><Select.Option key={item.key}>{item.value}</Select.Option>)}
             </Select>
           </Form.Item>
           <Form.Item name="timeRange" label="日期">
@@ -139,4 +152,4 @@ function Article() {
   );
 }
 
-export default Article;
+export default observer(Article);

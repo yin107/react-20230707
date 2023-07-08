@@ -1,6 +1,6 @@
 import { Layout, Menu, Popconfirm } from "antd";
 import React from "react";
-import "./index.scss";
+import layout from "./index.module.scss";
 import {
   LaptopOutlined,
   NotificationOutlined,
@@ -13,10 +13,13 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 
 function LayoutView() {
-  const {  loginStore,useStore1 } = useStore();
+  const {  loginStore,useStore1,channelStore } = useStore();
   useEffect(() => {
     useStore1.getUserInfo();
   }, [useStore1]);
+  useEffect(()=>{
+	channelStore.getChannelList()
+  },[])
 
   const itemsSider = [
     {
@@ -41,7 +44,7 @@ function LayoutView() {
     navigate(item.key);
   }
 
-  const loaction = useLocation(); //返回的是当前的路由对象
+  const location = useLocation(); //返回的是当前的路由对象
 
   function loginOut() {
     loginStore.clearToken();
@@ -49,9 +52,9 @@ function LayoutView() {
   }
 
   return (
-    <div>
-      <Layout>
-        <Layout.Header className="head">
+    <div style={{height:'100vh'}} className={layout.box}>
+      <Layout >
+        <Layout.Header className={layout.head}>
           <div>第一个测试</div>
           <div>
             <span style={{ marginRight: "10px" }}>
@@ -68,17 +71,18 @@ function LayoutView() {
             </Popconfirm>
           </div>
         </Layout.Header>
-        <Layout>
-          <Layout.Sider theme={"light"} width={120} className="siderBar">
+        <Layout >
+          <Layout.Sider  width={160} height={'100vh'} className={layout.sliderBar}>
             <Menu
               theme="dark"
               mode="inline"
               items={itemsSider}
-              defaultSelectedKeys={[loaction.pathname]}
+              defaultSelectedKeys={[location.pathname]}
+			  selectedKeys={[location.pathname]}
               onClick={(item) => clickMenu(item)}
             ></Menu>
           </Layout.Sider>
-          <Layout.Content>
+          <Layout.Content style={{padding:24,margin:0,minHeight:280,overflow:'auto'}}>
             {/* 二级出口路由 */}
             <Outlet />
           </Layout.Content>

@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import history from "./utils/history";
 import Login from "@/pages/Login";
 import LayoutView from "@/pages/Layout";
@@ -13,7 +13,7 @@ function App() {
   return (
     // <BrowserRouter>
     <HistoryRouter history={history}>
-      <div>
+      <div style={{margin:'0px'}}>
         <Routes>
           <Route path="/login" element={<Login></Login>}></Route>
           {/* <Route path='/' element={<Layout></Layout>}></Route> */}
